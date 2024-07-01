@@ -14,12 +14,18 @@ ProcessNote(device, channel, note, velocity, isNoteOn) {
 }
 
 ProcessCC(device, channel, cc, value) {
+	; range 12 to 19cc
     if (cc = 21 or cc = 29) {
         scaledValue := ConvertCCValueToScale(value, 0, 127)
         volume := scaledValue * 100
         SoundSetVolume(volume)
         DisplayOutput("Volume", Format('{1:.2f}', volume))
     } 
+	else if (cc = 12 and value != 0) {
+		; win + h for Speech input, does not work.
+		SendInput("{#}+{h}")
+		DisplayOutput("Speech", "Speech input")
+	}
 	 /* 
         Display change, boolean switch
         init ButtonPressed to False, after first press becomes true
@@ -28,11 +34,11 @@ ProcessCC(device, channel, cc, value) {
     else if (cc = 19 and value != 0) {
         static ButtonPressed := False
         if (ButtonPressed) {
-            Run, "C:\Windows\System32\DisplaySwitch.exe /extend"
+            Run("C:\Windows\System32\DisplaySwitch.exe /extend")
             DisplayOutput("Switch Screen", "Display 1+2")
             ButtonPressed := False
         } else if (ButtonPressed = False) {
-            Run, "C:\Windows\System32\DisplaySwitch.exe /external"
+            Run("C:\Windows\System32\DisplaySwitch.exe /external")
             DisplayOutput("Switch Screen", "Display 1")
             ButtonPressed := True
         }
