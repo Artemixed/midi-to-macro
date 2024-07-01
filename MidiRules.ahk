@@ -33,75 +33,77 @@ ProcessCC(device, channel, cc, value) {
 
     }
     else if (cc = 15 and value != 0){
+        ;MQTT publish (right bottom)
+        Run('C:\Program Files\mosquitto\mosquitto_pub.exe -h 192.168.8.186 -t light.all_lights/brightness/ -q 2 -m "test" -P adminadmin -u mqtt')
+        DisplayOutput("MQTT", "Test")
 
     }
     else if (cc = 16 and value != 0){
-
+        ;left top pad
     }
     else if (cc = 17 and value != 0){
 
     }
     else if (cc = 18 and value != 0){
-        {
 
-        }
+    }
 	 /* 
         Display change, boolean switch
         init ButtonPressed to False, after first press becomes true
         once true wait for new press and become false
-        */
-        else if (cc = 19 and value != 0) {
-            static ButtonPressed := False
-            if (ButtonPressed) {
-                Run("C:\Windows\System32\DisplaySwitch.exe /extend")
-                DisplayOutput("Switch Screen", "Display 1+2")
-                ButtonPressed := False
-            } else if (ButtonPressed = False) {
-                Run("C:\Windows\System32\DisplaySwitch.exe /external")
-                DisplayOutput("Switch Screen", "Display 1")
-                ButtonPressed := True
-            }
-            else {
-                DisplayOutput("error switching screens", "Exception caught")
-                ButtonPressed := True
-            }
+    */
+    else if (cc = 19 and value != 0) {
+        static ButtonPressed := False
+        if (ButtonPressed) {
+            Run("C:\Windows\System32\DisplaySwitch.exe /extend")
+            DisplayOutput("Switch Screen", "Display 1+2")
+            ButtonPressed := False
+        } else if (ButtonPressed = False) {
+            Run("C:\Windows\System32\DisplaySwitch.exe /external")
+            DisplayOutput("Switch Screen", "Display 1")
+            ButtonPressed := True
         }
-        else if (cc = 51) {
-            Send("{Volume_Mute}")
-            DisplayOutput("Volume", "Mute")
-        } else if (cc = 52 and value != 0) {
-            Send("{Volume_Down}")
-            DisplayOutput("Volume", "Down")
-        } else if (cc = 53 and value != 0) {
-            Send("{Volume_Up}")
-            DisplayOutput("Volume", "Up")
-        } else if (cc = 54 and value != 0) {
-            Send("{Media_Play_Pause}")
-            DisplayOutput("Media", "Play/Pause")
-        } else if (cc = 55 and value != 0) {
-            Send("{Media_Stop}")
-            DisplayOutput("Media", "Stop")
-        } else if (cc = 56 and value != 0) {
-            Send("{Media_Prev}")
-            DisplayOutput("Media", "Previous")
-        } else if (cc = 57 and value != 0) {
-            Send("{Media_Next}")
-            DisplayOutput("Media", "Next")
-        } else if (cc = 58 and value != 0) {
-            ; Place a cue marker in Sound Forge 9
-            try {
-                ControlSend("{Alt down}m{Alt up}", , "ahk_class #32770")
-                DisplayOutput("Sound Forge", "Place Cue Marker")
-            } catch TargetError {
-                ; Window doesn't exist, oh well
-            }
+        else {
+            DisplayOutput("error switching screens", "Exception caught")
+            ButtonPressed := True
         }
     }
-
-    ProcessPC(device, channel, note, velocity) {
-
+    else if (cc = 51) {
+        Send("{Volume_Mute}")
+        DisplayOutput("Volume", "Mute")
+    } else if (cc = 52 and value != 0) {
+        Send("{Volume_Down}")
+        DisplayOutput("Volume", "Down")
+    } else if (cc = 53 and value != 0) {
+        Send("{Volume_Up}")
+        DisplayOutput("Volume", "Up")
+    } else if (cc = 54 and value != 0) {
+        Send("{Media_Play_Pause}")
+        DisplayOutput("Media", "Play/Pause")
+    } else if (cc = 55 and value != 0) {
+        Send("{Media_Stop}")
+        DisplayOutput("Media", "Stop")
+    } else if (cc = 56 and value != 0) {
+        Send("{Media_Prev}")
+        DisplayOutput("Media", "Previous")
+    } else if (cc = 57 and value != 0) {
+        Send("{Media_Next}")
+        DisplayOutput("Media", "Next")
+    } else if (cc = 58 and value != 0) {
+        ; Place a cue marker in Sound Forge 9
+        try {
+            ControlSend("{Alt down}m{Alt up}", , "ahk_class #32770")
+            DisplayOutput("Sound Forge", "Place Cue Marker")
+        } catch TargetError {
+            ; Window doesn't exist, oh well
+        }
     }
+}
 
-    ProcessPitchBend(device, channel, value) {
+ProcessPC(device, channel, note, velocity) {
 
-    }
+}
+
+ProcessPitchBend(device, channel, value) {
+
+}
