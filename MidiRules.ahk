@@ -8,6 +8,8 @@
 	The MidiRules section is for mapping MIDI input to actions.
 	Alter these functions as required.
 */
+; check if usb akai lpd8 midi controller is connected if not exit
+; LPD8 mk2: USB\VID_09E8&PID_004C&MI_00\8&1CBB8BA4&0&0000
 
 ProcessNote(device, channel, note, velocity, isNoteOn) {
 
@@ -97,9 +99,16 @@ ProcessCC(device, channel, cc, value) {
     } else if (cc = 53 and value != 0) {
         Send("{Volume_Up}")
         DisplayOutput("Volume", "Up")
-    } else if (cc = 54 and value != 0) {
-        Send("{Media_Play_Pause}")
-        DisplayOutput("Media", "Play/Pause")
+    } else if (cc = 73) {
+        scaledValue := ConvertCCValueToScale(value, 0, 127)
+        volume := scaledValue * 100
+        try {
+            SoundSetVolume(volume, ,14)
+            DisplayOutput("Vol Capture Set To", Format('{1:.2f}', volume))
+        } catch {
+            DisplayOutput("ERROR", "Capture not found")
+            Return
+        }
     } else if (cc = 55 and value != 0) {
         Send("{Media_Stop}")
         DisplayOutput("Media", "Stop")
