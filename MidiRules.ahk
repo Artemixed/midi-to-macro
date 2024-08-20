@@ -26,6 +26,7 @@ ProcessCC(device, channel, cc, value) {
     } 
 else if (cc = 12 && value != 0) {
     ; Send the Windows key + H shortcut for Speech input
+    SendInput("{tab}")
     SendInput("{LWin down}h{LWin up}")
     DisplayOutput("Speech", "Speech input")
 }
