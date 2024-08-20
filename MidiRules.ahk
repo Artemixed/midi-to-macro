@@ -1,4 +1,5 @@
 #Requires AutoHotkey v2
+#Include "./AppVol.ahk"
 
 ;*************************************************
 ;*          RULES - MIDI FILTERS
@@ -23,11 +24,11 @@ ProcessCC(device, channel, cc, value) {
         SoundSetVolume(volume)
         DisplayOutput("Volume", Format('{1:.2f}', volume))
     } 
-    else if (cc = 12 and value != 0) {
-        ; win + h for Speech input, does not work.
-        SendInput("{#}+{h}")
-        DisplayOutput("Speech", "Speech input")
-    }
+else if (cc = 12 && value != 0) {
+    ; Send the Windows key + H shortcut for Speech input
+    SendInput("{LWin down}h{LWin up}")
+    DisplayOutput("Speech", "Speech input")
+}
     else if (cc = 13 and value != 0){
 
     }
@@ -86,19 +87,27 @@ ProcessCC(device, channel, cc, value) {
     else if (cc = 70) {
         scaledValue := ConvertCCValueToScale(value, 0, 127)
         volume := scaledValue * 100
-        if not WinExist("Brave") {
-            DisplayOutput("ERROR", "Brave not found")
-            Return
-        }
-        SoundSetVolume(volume), "brave.exe"
+        AppVol("brave.exe", volume)
         DisplayOutput("Vol Brave Set To", Format('{1:.2f}', volume))
     } 
-    else if (cc = 52 and value != 0) {
-        Send("{Volume_Down}")
-        DisplayOutput("Volume", "Down")
-    } else if (cc = 53 and value != 0) {
-        Send("{Volume_Up}")
-        DisplayOutput("Volume", "Up")
+    else if (cc = 71) {
+        scaledValue := ConvertCCValueToScale(value, 0, 127)
+        volume := scaledValue * 100
+        if not WinExist("Spotify") {
+            DisplayOutput("ERROR", "Spotify not found")
+            Return
+        }
+        SoundSetVolume(volume), "Spotify"
+        DisplayOutput("Vol spotify Set To", Format('{1:.2f}', volume))
+    } else if (cc = 72) {
+        scaledValue := ConvertCCValueToScale(value, 0, 127)
+        volume := scaledValue * 100
+        try {
+            SoundSetVolume(volume), "discord.exe"
+            DisplayOutput("Vol Discord Set To", Format('{1:.2f}', volume))
+        }catch {
+            DisplayOutput("ERROR", "Capture not found")
+        }
     } else if (cc = 73) {
         scaledValue := ConvertCCValueToScale(value, 0, 127)
         volume := scaledValue * 100
@@ -109,30 +118,37 @@ ProcessCC(device, channel, cc, value) {
             DisplayOutput("ERROR", "Capture not found")
             Return
         }
-    } else if (cc = 55 and value != 0) {
-        Send("{Media_Stop}")
-        DisplayOutput("Media", "Stop")
-    } else if (cc = 56 and value != 0) {
-        Send("{Media_Prev}")
-        DisplayOutput("Media", "Previous")
-    } else if (cc = 57 and value != 0) {
-        Send("{Media_Next}")
-        DisplayOutput("Media", "Next")
-    } else if (cc = 58 and value != 0) {
-        ; Place a cue marker in Sound Forge 9
-        try {
-            ControlSend("{Alt down}m{Alt up}", , "ahk_class #32770")
-            DisplayOutput("Sound Forge", "Place Cue Marker")
-        } catch TargetError {
-            ; Window doesn't exist, oh well
+        else if (cc = 77) {
+            scaledValue := ConvertCCValueToScale(value, 0, 127)
+            volume := scaledValue * 100
+            try {
+                Run('C:\Program Files\mosquitto\mosquitto_pub.exe -h 192.168.8.186 -P adminadmin -u mqtt -q 0 -r -t light.all_lights/brightness -m {"command": "arm_home", "code": "9712"}')
+            }
+        } else if (cc = 55 and value != 0) {
+            Send("{Media_Stop}")
+            DisplayOutput("Media", "Stop")
+        } else if (cc = 56 and value != 0) {
+            Send("{Media_Prev}")
+            DisplayOutput("Media", "Previous")
+        } else if (cc = 57 and value != 0) {
+            Send("{Media_Next}")
+            DisplayOutput("Media", "Next")
+        } else if (cc = 58 and value != 0) {
+            ; Place a cue marker in Sound Forge 9
+            try {
+                ControlSend("{Alt down}m{Alt up}", , "ahk_class #32770")
+                DisplayOutput("Sound Forge", "Place Cue Marker")
+            } catch TargetError {
+                ; Window doesn't exist, oh well
+            }
         }
     }
 }
 
-ProcessPC(device, channel, note, velocity) {
+    ProcessPC(device, channel, note, velocity) {
 
-}
+    }
 
-ProcessPitchBend(device, channel, value) {
+    ProcessPitchBend(device, channel, value) {
 
-}
+    }
